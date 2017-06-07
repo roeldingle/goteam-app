@@ -1,5 +1,9 @@
+import { FirebaseServiceProvider} from '../../providers/firebase-service/firebase-service';
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { NavController, AlertController, ActionSheetController } from 'ionic-angular';
+
+
+import { FirebaseListObservable } from 'angularfire2/database';
 
 @Component({
   selector: 'page-home',
@@ -7,8 +11,24 @@ import { NavController } from 'ionic-angular';
 })
 export class HomePage {
 
-  constructor(public navCtrl: NavController) {
+  itemList: FirebaseListObservable<any[]>;
+  newItem = '';
 
-  }
+ constructor(public navCtrl: NavController, public alertCtrl: AlertController, public firebaseService: FirebaseServiceProvider, public actionSheetCtrl: ActionSheetController) {
+  	this.itemList = this.firebaseService.getItemList();
+ }
+
+  
+
+ addItem(){
+ 	this.firebaseService.addItem(this.newItem);
+
+ }
+
+ removeItem(id){
+
+ 	this.firebaseService.removeItem(id);
+ }
+
 
 }
