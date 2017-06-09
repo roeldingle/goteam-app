@@ -3,6 +3,11 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { GooglePlus } from '@ionic-native/google-plus';
 import { HomePage } from '../home/home';
 
+import { AngularFireModule } from 'angularfire2';
+import firebase from 'firebase';
+
+
+
 /**
  * Generated class for the LoginPage page.
  *
@@ -16,7 +21,9 @@ import { HomePage } from '../home/home';
 })
 export class LoginPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public googleglus: GooglePlus ) {
+  fireauth = firebase.auth();
+
+  constructor(public navCtrl: NavController, public navParams: NavParams, public googleglus: GooglePlus, public af: AngularFireModule ) {
   }
 
   ionViewDidLoad() {
@@ -25,10 +32,17 @@ export class LoginPage {
 
   googleauth(){
 
-  	this.googleglus.login({})
+  	this.googleglus.login({
+      'webClientId' : '531788288658-jebq264elq8348ntvk8vmir5imsjlrml.apps.googleusercontent.com'
+    })
   	.then((res) =>{
-  		alert("Login success");
-  		this.navCtrl.setRoot(HomePage);
+  		const firecreds = firebase.auth.GoogleAuthProvider.credential(res.idToken);
+      this.fireauth.signInWithCredential(firecreds).then((res)=> {
+        this.navCtrl.setRoot(HomePage);
+      }).catch((err) => {
+        alert('Firebase auth failed' + err);
+      })
+  		
   	}).catch((err) =>{
   		alert("Error "+ err);
   	});
